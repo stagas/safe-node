@@ -1,6 +1,6 @@
 {
   "name": "safe-node",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "PoC of node with permissions prompts a la deno",
   "main": "index.js",
   "bin": {
@@ -12,9 +12,15 @@
     ]
   },
   "scripts": {
+    "prepack": "echo ok",
+    "prepush": "echo ok",
     "test": "echo ok"
   },
-  "keywords": [],
+  "keywords": [
+    "node",
+    "security",
+    "permissions"
+  ],
   "author": "stagas",
   "license": "MIT",
   "dependencies": {
