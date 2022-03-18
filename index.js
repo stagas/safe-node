@@ -106,6 +106,8 @@ const isAllowed = isPerm(ALLOW)
               perms.push(['*', '*', ALLOW, file])
               append(permsFile, JSON.stringify(perms.at(-1)) + '\n')
               break
+            default:
+              return
           }
         }
 
