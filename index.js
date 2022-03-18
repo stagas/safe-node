@@ -67,17 +67,18 @@ const isAllowed = isPerm(ALLOW)
     if (typeof real !== 'function') continue
 
     Object.defineProperty(m, method, {
-      get: function () {
+      get() {
         const file = getCallerFile(2) ?? getCallerFile(1)
         if (file.startsWith('node:')) return real
 
         if (isDenied(mod, method, file)) return
 
         if (!isAllowed(mod, method, file)) {
-          const result = prompt(
-            file +
-              `\n  wants to access "${mod}.${method}". Allow access?\n (n)ot now / neve(r) / n(o)ne from this module\n (y)es only now / (a)lways / all from this (m)odule / al(l) modules always\n> `
-          )
+          const result = prompt(`${file}
+  wants to access "${mod}.${method}". Allow access?
+ (n)ot now / neve(r) / n(o)ne from this module
+ (y)es only now / (a)lways / all from this (m)odule / al(l) modules always
+> `)
 
           switch (result) {
             case 'n': // not now
