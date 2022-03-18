@@ -59,8 +59,11 @@ const isPerm = targetPerm => (targetModule, targetMethod, targetFile) =>
 const isDenied = isPerm(DENY)
 const isAllowed = isPerm(ALLOW)
 
+const allModulesAlways = new Set()
+
 ;['fs', 'net', 'http', 'https', 'child_process'].forEach(mod => {
   const m = require(mod)
+  const allThisModule = new Set()
 
   for (const method in m) {
     const real = m[method]
@@ -74,10 +77,16 @@ const isAllowed = isPerm(ALLOW)
         if (isDenied(mod, method, file)) return
 
         if (!isAllowed(mod, method, file)) {
+          if (allModulesAlways.has(file) || allThisModule.has(file)) {
+            perms.push([mod, method, ALLOW, file])
+            append(permsFile, JSON.stringify(perms.at(-1)) + '\n')
+            return real
+          }
+
           const result = prompt(`${file}
   wants to access "${mod}.${method}". Allow access?
- (n)ot now / neve(r) / n(o)ne from this module
- (y)es only now / (a)lways / all from this (m)odule / al(l) modules always
+ (n)ot now / neve(r) / n(o)ne from this module / (d)eny for all modules
+ (y)es only now / (a)lways / all from this (m)odule / al(l) modules always / (t)rust this and allow all
 > `)
 
           switch (result) {
@@ -92,6 +101,10 @@ const isAllowed = isPerm(ALLOW)
               perms.push([mod, '*', DENY, file])
               append(permsFile, JSON.stringify(perms.at(-1)) + '\n')
               return
+            case 'd': // deny for all modules
+              perms.push(['*', '*', DENY, file])
+              append(permsFile, JSON.stringify(perms.at(-1)) + '\n')
+              return
             case 'y': // yes only now
               perms.push([mod, method, ALLOW, file])
               break
@@ -100,10 +113,16 @@ const isAllowed = isPerm(ALLOW)
               append(permsFile, JSON.stringify(perms.at(-1)) + '\n')
               break
             case 'm': // all from this module
-              perms.push([mod, '*', ALLOW, file])
+              perms.push([mod, method, ALLOW, file])
               append(permsFile, JSON.stringify(perms.at(-1)) + '\n')
+              allThisModule.add(file)
               break
             case 'l': // all modules always
+              perms.push([mod, method, ALLOW, file])
+              append(permsFile, JSON.stringify(perms.at(-1)) + '\n')
+              allModulesAlways.add(file)
+              break
+            case 't': // trust this and allow all
               perms.push(['*', '*', ALLOW, file])
               append(permsFile, JSON.stringify(perms.at(-1)) + '\n')
               break
