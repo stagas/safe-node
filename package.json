@@ -1,0 +1,25 @@
+{
+  "name": "safe-node",
+  "version": "1.0.0",
+  "description": "PoC of node with permissions prompts a la deno",
+  "main": "index.js",
+  "bin": {
+    "safe-node": "bin.js"
+  },
+  "pkg": {
+    "targets": [
+      "node17-linux"
+    ]
+  },
+  "scripts": {
+    "test": "echo ok"
+  },
+  "keywords": [],
+  "author": "stagas",
+  "license": "MIT",
+  "dependencies": {
+    "cross-spawn": "^7.0.3",
+    "fs-ndjson": "^1.1.0",
+    "get-caller-file": "^2.0.5"
+  }
+}
